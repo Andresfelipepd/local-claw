@@ -6,6 +6,7 @@ USER root
 RUN apt-get update && apt-get install -y \
     curl \
     git \
+    golang-go \
     build-essential \
     ca-certificates \
     wget \
@@ -15,6 +16,14 @@ RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
     && rm -rf /var/lib/apt/lists/*
+
+RUN pip install uv
+
+# pnpm global dir
+ENV PNPM_HOME=/root/.local/share/pnpm
+ENV PATH=$PNPM_HOME:$PATH
+
+RUN mkdir -p $PNPM_HOME
 
 # instalar nvm
 ENV NVM_DIR=/root/.nvm
