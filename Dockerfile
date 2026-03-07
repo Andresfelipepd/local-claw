@@ -1,7 +1,5 @@
 FROM ghcr.io/openclaw/openclaw:latest
-
 USER root
-
 # deps básicas (las que ya usas)
 RUN apt-get update && apt-get install -y \
     curl \
@@ -21,14 +19,14 @@ RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 ENV PATH="/root/.local/bin:$PATH"
 
 # pnpm global dir
-ENV PNPM_HOME=/root/.local/share/pnpm
+ENV PNPM_HOME=/home/node/.local/share/pnpm
 ENV PATH=$PNPM_HOME:$PATH
 
 RUN mkdir -p $PNPM_HOME
 
 # instalar nvm
 ENV NVM_DIR=/root/.nvm
-ENV NODE_VERSION=20
+ENV NODE_VERSION=lts
 
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 
