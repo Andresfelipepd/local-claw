@@ -12,6 +12,9 @@ RUN apt-get update && apt-get install -y \
     golang-go \
     && rm -rf /var/lib/apt/lists/*
 
+RUN mkdir -p /home/linuxbrew/.linuxbrew \
+ && chown -R node:node /home/linuxbrew
+
 USER node
 
 # npm
@@ -27,6 +30,7 @@ ENV PATH="$GOPATH/bin:${PATH}"
 RUN npm install -g clawhub
 
 # brew
+ENV NONINTERACTIVE=1
 RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ENV PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:${PATH}"
 
