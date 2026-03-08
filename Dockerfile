@@ -9,9 +9,15 @@ RUN apt-get update && apt-get install -y \
     python3 \
     file \
     procps \
-    golang-go \
     && rm -rf /var/lib/apt/lists/*
 
+# install Go
+RUN curl -L https://go.dev/dl/go1.23.6.linux-amd64.tar.gz -o /tmp/go.tar.gz \
+ && rm -rf /usr/local/go \
+ && tar -C /usr/local -xzf /tmp/go.tar.gz \
+ && rm /tmp/go.tar.gz
+
+# prepare linuxbrew
 RUN mkdir -p /home/linuxbrew/.linuxbrew \
  && chown -R node:node /home/linuxbrew
 
@@ -20,23 +26,25 @@ USER node
 # npm
 RUN mkdir -p /home/node/.npm-global
 RUN npm config set prefix '/home/node/.npm-global'
-ENV PATH="/home/node/.npm-global/bin:${PATH}"
 
-# go
+# go workspace
 RUN mkdir -p /home/node/go
+
+# uv location
+RUN mkdir -p /home/node/.local/bin
+
+# PATH global
 ENV GOPATH="/home/node/go"
-ENV PATH="$GOPATH/bin:${PATH}"
+ENV PATH="/usr/local/go/bin:/home/node/go/bin:/home/node/.npm-global/bin:/home/node/.local/bin:/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:${PATH}"
 
 RUN npm install -g clawhub
 
 # brew
 ENV NONINTERACTIVE=1
 RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-ENV PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:${PATH}"
 
-# uv 
+# uv
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
-ENV PATH="/home/node/.local/bin:${PATH}"
 
 WORKDIR /app
 
